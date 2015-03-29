@@ -118,7 +118,7 @@ setupLeftMotor()
 }
 
 void
-setupRightMotorAndServo()
+setupRightMotor()
 {
 	// phase and frequency correct mode, counter/timer 4
 	// top set by OCR4C to 255, producing frequency ~31 kHz
@@ -126,8 +126,6 @@ setupRightMotorAndServo()
 	// Usable values 155 <= N <= 255
 	OCR4C = 255;
 	OCR4D = 0;
-	//OCR4A = 0;
-	//TCCR4A |= ( 1 << COM4A1 ) | ( 1 << PWM4A );
 	TCCR4C |= ( 1 << COM4D1 ) | ( 1 << PWM4D );
 	TCCR4D |= ( 1 << WGM40 );
 	TCCR4B |= ( 1 << CS40 );
@@ -138,9 +136,6 @@ setupRightMotorAndServo()
 	
 	// enable output to OC4D/PD7 pin "D6"
 	DDRD |= ( 1 << DDD7 );
-	
-	// enable output to OC4A/PC7 pin "D13" also attached to led "L"
-	//DDRC = ( 1 << DDC7 );	
 }
 
 void
@@ -339,8 +334,11 @@ readIntWithTimeout( int & result, int & timeoutLeft, bool & valid )
 
 int main(void)
 {
+	// enable output to OC4A/PC7 pin "D13" also attached to led "L"
+	DDRC = ( 1 << DDC7 );
+	
 	setupLeftMotor();
-	setupRightMotorAndServo();
+	setupRightMotor();
 	sei();
 	
 	//uint16_t speed = 255;
