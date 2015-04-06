@@ -137,6 +137,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="dist.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dist.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="HardwareSerial.cpp">
       <SubType>compile</SubType>
     </Compile>
