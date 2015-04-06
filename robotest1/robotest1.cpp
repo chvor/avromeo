@@ -1,10 +1,17 @@
 /*
- * robotest1.cpp
+ * AVR/Romeo experimental code.
  *
- * Created: 10.12.2014 г. 22:04:00 ч.
- *  Author: viktor
- */ 
-
+ * Used for a Romeo V2.2 (R3) board from www.dfrobot.com:
+ * http://www.dfrobot.com/index.php?route=product/product&keyword=romeo%20v2&product_id=844
+ * (the model might be obsolete/newer revision)
+ *
+ * It is using AVR ATmega32U4 with an Arduino firmware but I managed
+ * to destroy my USB port and was never fond of the Arduino IDE anyway
+ * so I'm using Atmel Studio (6.2 currently) and ISP to program it.
+ *
+ * JTAG works fine too but it disables 4 pins from port F (PF4..PF7, Arduino
+ * analog ports A0, A1, A2 and A3).
+ */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -85,17 +92,6 @@ void
 toggleTX()
 {
 	PIND |= ( 1 << PIND5 );
-}
-
-static volatile uint16_t t3cnt = 0;
-//ISR( TIMER3_OVF_vect )
-ISR( TIMER3_COMPA_vect )
-{
-	if( ++t3cnt == 62500 )
-	{
-		t3cnt = 0;
-		toggleTX();
-	}
 }
 
 void
@@ -186,13 +182,6 @@ fullStop()
 {
 	leftMotorStop();
 	rightMotorStop();
-}
-
-void
-servoSet( uint16_t pos )
-{
-	TC4H = ( pos >> 8 ) & 0x3;
-	OCR4A = pos & 0xff;
 }
 
 #define AUTOMOVE_DELAY 1000
@@ -334,8 +323,6 @@ readIntWithTimeout( int & result, int & timeoutLeft, bool & valid )
 
 int main(void)
 {
-	// enable output to OC4A/PC7 pin "D13" also attached to led "L"
-	DDRC = ( 1 << DDC7 );
 	
 	setupLeftMotor();
 	setupRightMotor();
@@ -440,15 +427,14 @@ int main(void)
 				break;
 				
 			case 'v':
-				servoSet( r );
 				break;
 				
 			default:
 				break;
 			}
 			
-			Serial1.write('$');
-			Serial1.write(10);
+			Serial1.write( '$' );
+			Serial1.write( 10 );
 		}
     }
 }
