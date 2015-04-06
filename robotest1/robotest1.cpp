@@ -198,17 +198,17 @@ servoSet( uint16_t pos )
 #define AUTOMOVE_DELAY 1000
 
 void
-moveForward( uint8_t speed )
+moveForward( uint8_t speed = 255 )
 {
-	//leftMotorForward( speed );
+	leftMotorForward( speed );
 	rightMotorForward( speed );
-	//_delay_ms( AUTOMOVE_DELAY );
-	//leftMotorStop();
-	//rightMotorStop();
+	_delay_ms( AUTOMOVE_DELAY );
+	leftMotorStop();
+	rightMotorStop();
 }
 
 void
-moveBackward( uint8_t speed )
+moveBackward( uint8_t speed = 255 )
 {
 	leftMotorBackward( speed );
 	rightMotorBackward( speed );
@@ -218,7 +218,7 @@ moveBackward( uint8_t speed )
 }
 
 void
-turnLeft( uint8_t )
+turnLeft( uint8_t speed = 255 )
 {
 	leftMotorBackward( 255 );
 	rightMotorForward( 255 );
@@ -228,10 +228,10 @@ turnLeft( uint8_t )
 }
 
 void
-turnRight( uint8_t )
+turnRight( uint8_t speed = 255 )
 {
-	leftMotorForward( 255 );
-	rightMotorBackward( 255 );
+	leftMotorForward( speed );
+	rightMotorBackward( speed );
 	_delay_ms( AUTOMOVE_DELAY );
 	leftMotorStop();
 	rightMotorStop();
@@ -420,22 +420,19 @@ int main(void)
 				break;
 				
 			case 'f':
-				//motorControl( 45, 45 );
+				moveForward();
 				break;
 				
 			case 'b':
-				leftMotorBackward( 240 );
-				rightMotorBackward( 240 );
+				moveBackward();
 				break;
 				
 			case 'l':
-				leftMotorBackward( 240 );
-				rightMotorForward( 240 );
+				turnLeft();
 				break;
 				
 			case 'r':
-				leftMotorForward( 240 );
-				rightMotorBackward( 240 );
+				turnRight();
 				break;
 			
 			case 'w':
