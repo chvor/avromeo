@@ -42,8 +42,8 @@
     <com_atmel_avrdbg_tool_avrdragon>
       <ToolOptions>
         <InterfaceProperties>
-          <IspClock>1000000</IspClock>
-          <JtagDbgClock>200000</JtagDbgClock>
+          <IspClock>2000000</IspClock>
+          <JtagDbgClock>2000000</JtagDbgClock>
         </InterfaceProperties>
         <InterfaceName>ISP</InterfaceName>
       </ToolOptions>
