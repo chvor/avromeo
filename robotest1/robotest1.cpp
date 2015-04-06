@@ -18,6 +18,8 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include "HardwareSerial.h"
+#include "servo.h"
+#include "dist.h"
 
 uint8_t
 ADCsingleREAD( uint8_t adctouse )
@@ -321,16 +323,33 @@ readIntWithTimeout( int & result, int & timeoutLeft, bool & valid )
 	return r;
 }
 
+uint8_t irstatus[10] = {'0', ' ', '0', ' ', '0', ' ', '0', '0', '0', 10};
+
+Servo servo;
+Dist dist;
+
 int main(void)
 {
+	// enable output to PD5 ("TX" led)
+	//DDRD |= ( 1 << DDD5 );
+	
+	// enable input on PF4 ("A3" pin) with pull-up - IR sensor
+	// enable input on PF1 ("A4" pin) with pull-up - Center IR sensor
+	// enable input on PF0 ("A5" pin) with pull-up - IR sensor
+	DDRF &= ~( ( 1 << DDF0 ) | ( 1 << DDF1 ) | ( 1 << DDF4 ) );
+	PORTF |= ( ( 1 << PORTF0 ) | ( 1 << PORTF1 ) | ( 1 << PORTF4 ) );
 	
 	setupLeftMotor();
 	setupRightMotor();
+	servo.Enable();
+	dist.Enable();
 	sei();
 	
 	//uint16_t speed = 255;
 	
 	Serial1.begin(9600);
+	
+	//int dist = 0;
 	
     while(1)
     {
@@ -427,6 +446,7 @@ int main(void)
 				break;
 				
 			case 'v':
+				servo.SetAngle( static_cast< uint8_t >( r ) );
 				break;
 				
 			default:
@@ -436,5 +456,21 @@ int main(void)
 			Serial1.write( '$' );
 			Serial1.write( 10 );
 		}
+#if 0
+		else if( t1acc > 50000 )
+		{
+			irstatus[0] = '0' + ( ( PINF >> PINF0 ) & 1 );
+			irstatus[2] = '0' + ( ( PINF >> PINF1 ) & 1 );
+			irstatus[4] = '0' + ( ( PINF >> PINF4 ) & 1 );
+			//dist = readDistanceCM();
+			irstatus[6] = '0' + ( dist / 100 );
+			irstatus[7] = '0' + ( ( dist / 10 ) % 10 );
+			irstatus[8] = '0' + ( dist % 10 );
+			for( int i = 0; i < 10; ++i )
+			{
+				Serial1.write( irstatus[i] );
+			}
+		}
+#endif		
     }
 }
